@@ -13,4 +13,3 @@ public class AuthController {
         return "Hello, you are in the public endpoint!";
     }
 }
-
