@@ -23,37 +23,40 @@ public class TodoService {
         this.userRepository = userRepository;
     }
 
-    public List<TodoItemDTO> getAllTodos(String username) {
-        List<TodoItemEntity> todos = todoRepository.findByUsername(username);
+    public List<TodoItemDTO> getAllTodos(String userId) {
+        List<TodoItemEntity> todos = todoRepository.findByUserId(userId);
         return todos.stream()
                 .map(TodoMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public TodoItemDTO createTodo(String username, TodoItemDTO todo) {
+    public TodoItemDTO createTodo(String userId, TodoItemDTO todo) {
         TodoItemEntity entity = TodoMapper.toEntity(todo);
-        boolean userExists = userRepository.existsById(todo.getUserId());
+
+        // Check if the user exists
+        boolean userExists = userRepository.existsByUserId(entity.getUserId());
         if (!userExists) {
             throw new IllegalArgumentException("Invalid userId: user does not exist");
         }
+
         TodoItemEntity saved = todoRepository.save(entity);
         return TodoMapper.toDTO(saved);
     }
 
-    public TodoItemDTO updateTodo(String username, String todoId, TodoItemDTO todoDTO) {
-        TodoItemEntity entity = todoRepository.findByTodoIdAndUsername(todoId, username)
+    public TodoItemDTO updateTodo(String userId, String todoId, TodoItemDTO todoDTO) {
+        TodoItemEntity entity = todoRepository.findByTodoIdAndUserId(todoId, userId)
                 .orElseThrow(() -> new RuntimeException("Todo not found or access denied"));
 
         entity.setTitle(todoDTO.getTitle());
         entity.setContent(todoDTO.getContent());
-        entity.setDone(todoDTO.getDone());
+        entity.setDone(todoDTO.isDone());
 
         TodoItemEntity updated = todoRepository.save(entity);
         return TodoMapper.toDTO(updated);
     }
 
-    public void deleteTodo(String username, String todoId) {
-        TodoItemEntity entity = todoRepository.findByTodoIdAndUsername(todoId, username)
+    public void deleteTodo(String userId, String todoId) {
+        TodoItemEntity entity = todoRepository.findByTodoIdAndUserId(todoId, userId)
                 .orElseThrow(() -> new RuntimeException("Todo not found or access denied"));
 
         todoRepository.delete(entity);

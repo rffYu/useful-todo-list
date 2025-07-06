@@ -25,8 +25,8 @@ public class TodoController {
      */
     @GetMapping
     public ResponseEntity<List<TodoItemDTO>> getAllTodos(Authentication authentication) {
-        String username = authentication.getName();
-        List<TodoItemDTO> todos = todoService.getAllTodos(username);
+        String userId = authentication.getName();
+        List<TodoItemDTO> todos = todoService.getAllTodos(userId);
         return ResponseEntity.ok(todos);
     }
 
@@ -35,8 +35,8 @@ public class TodoController {
      */
     @PostMapping
     public ResponseEntity<TodoItemDTO> createTodo(Authentication authentication, @RequestBody TodoItemDTO todoDTO) {
-        String username = authentication.getName();
-        TodoItemDTO createdTodo = todoService.createTodo(username, todoDTO);
+        String userId = authentication.getName();
+        TodoItemDTO createdTodo = todoService.createTodo(userId, todoDTO);
         return ResponseEntity.ok(createdTodo);
     }
 
@@ -45,10 +45,10 @@ public class TodoController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TodoItemDTO> updateTodo(Authentication authentication,
-                                              @PathVariable String id,
+                                              @PathVariable String todoId,
                                               @RequestBody TodoItemDTO todoDTO) {
-        String username = authentication.getName();
-        TodoItemDTO updatedTodo = todoService.updateTodo(username, id, todoDTO);
+        String userId = authentication.getName();
+        TodoItemDTO updatedTodo = todoService.updateTodo(userId, todoId, todoDTO);
         return ResponseEntity.ok(updatedTodo);
     }
 

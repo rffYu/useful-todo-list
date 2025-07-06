@@ -19,13 +19,13 @@ public class UserService {
 
     public UserDTO findByUsername(String userId) {
         UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
         return UserMapper.toDTO(user);
     }
 
     public UserDTO updateUser(String userId, UserDTO updatedUserData) {
         UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
         user.setUserName(updatedUserData.getUserName());
         user.setRoleId(updatedUserData.getRoleId());
@@ -35,9 +35,9 @@ public class UserService {
         return UserMapper.toDTO(savedUser);
     }
 
-    public void deleteUser(String userID) {
+    public void deleteUser(String userId) {
         UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
         userRepository.delete(user);
     }
 }
