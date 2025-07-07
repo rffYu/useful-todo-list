@@ -18,12 +18,14 @@ public class UserEntity {
 
     private String userName;
 
+    private String password;
+
     @Enumerated(EnumType.STRING)
     private Role roleId;
 
     private String groupId;
 
-    public UserEntity(String userId, String userName, Role roleId, String groupId) {
+    public UserEntity(String userId, String userName, String password, Role roleId, String groupId) {
         if (userId == null || userId.isEmpty()) {
             this.userId = UUID.randomUUID().toString();
         } else {
@@ -31,6 +33,7 @@ public class UserEntity {
         }
 
         this.userName = userName;
+        this.password = password;
         this.roleId = roleId;
         this.groupId = groupId;
     }

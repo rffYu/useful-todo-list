@@ -1,5 +1,6 @@
 package com.useful.todolist.auth.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @GetMapping("/hello")
-    public String hello() {
-        return "Hello, you are in the public endpoint!";
+    public String hello(Authentication authentication) {
+        String currentUsername = authentication.getName();
+        return "Hello, you are " + currentUsername;
     }
 }

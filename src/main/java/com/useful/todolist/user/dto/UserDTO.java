@@ -18,6 +18,9 @@ public class UserDTO {
     @JsonProperty("userName")
     private String userName;
 
+    @JsonProperty("password")
+    private String password;
+
     @JsonProperty("roleId")
     private Role roleId = Role.USER;
 

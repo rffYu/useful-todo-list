@@ -5,6 +5,7 @@ import com.useful.todolist.todo.dao.TodoItemEntity;
 import com.useful.todolist.todo.repository.TodoRepository;
 import com.useful.todolist.user.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.useful.todolist.user.dao.UserEntity;
@@ -19,17 +20,18 @@ class InitialData {
     private List<TodoItemEntity> todos;
 }
 
-
 @Component
 public class MockDataLoader implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
     private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public MockDataLoader(UserRepository userRepository, TodoRepository todoRepository) {
+    public MockDataLoader(UserRepository userRepository, TodoRepository todoRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.todoRepository = todoRepository;
+        this.passwordEncoder = passwordEncoder;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -50,7 +52,14 @@ public class MockDataLoader implements CommandLineRunner {
 
         if (data.getUsers() != null) {
             userRepository.deleteAll();
-            userRepository.saveAll(data.getUsers());
+
+            List<UserEntity> encodedUsers = data.getUsers().stream()
+            .peek(user -> {
+                user.setPassword(passwordEncoder.encode(user.getPassword())); // 💡 encode password here
+            })
+            .toList();
+
+            userRepository.saveAll(encodedUsers);
             System.out.println("Loaded " + data.getUsers().size() + " users.");
         }
 

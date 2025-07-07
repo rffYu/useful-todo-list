@@ -6,10 +6,10 @@ import com.useful.todolist.user.dao.UserEntity;
 public class UserMapper {
 
     public static UserDTO toDTO(UserEntity entity) {
-        return new UserDTO(entity.getUserId(), entity.getUserName(), entity.getRoleId(), entity.getGroupId());
+        return new UserDTO(entity.getUserId(), entity.getUserName(), entity.getPassword(), entity.getRoleId(), entity.getGroupId());
     }
 
     public static UserEntity toEntity(UserDTO dto) {
-        return new UserEntity(dto.getUserId(), dto.getUserName(), dto.getRoleId(), dto.getGroupId());
+        return new UserEntity(dto.getUserId(), dto.getUserName(), dto.getPassword(), dto.getRoleId(), dto.getGroupId());
     }
 }
