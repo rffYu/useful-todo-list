@@ -3,23 +3,21 @@ package com.useful.todolist.user.controller;
 import com.useful.todolist.user.UserMapper;
 import com.useful.todolist.user.dao.UserEntity;
 import com.useful.todolist.user.dto.UserDTO;
-import com.useful.todolist.user.repository.UserRepository;
+import com.useful.todolist.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     /**
@@ -28,13 +26,9 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
         String userId = authentication.getName();
-        Optional<UserEntity> user = userRepository.findByUserId(userId);
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            UserDTO userDTO = UserMapper.toDTO(user.get());
-            return ResponseEntity.ok(userDTO);
-        }
+        UserEntity user = userService.findByUserId(userId);
+        UserDTO userDTO = UserMapper.toDTO(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     /**
@@ -46,7 +40,7 @@ public class UserController {
             @RequestBody UserDTO updatedUserData) {
 
         String username = authentication.getName();
-        UserEntity updatedUser = userRepository.updateUser(username, UserMapper.toEntity(updatedUserData));
+        UserEntity updatedUser = userService.updateUser(username, updatedUserData);
         return ResponseEntity.ok(UserMapper.toDTO(updatedUser));
     }
 
@@ -56,7 +50,7 @@ public class UserController {
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteCurrentUser(Authentication authentication) {
         String userId = authentication.getName();
-        userRepository.deleteByUserId(userId);
+        userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 }

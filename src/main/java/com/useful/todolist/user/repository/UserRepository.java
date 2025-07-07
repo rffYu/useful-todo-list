@@ -10,7 +10,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     boolean existsByUserId(String userId);
 
-    UserEntity updateUser(String userId, UserEntity updatedUserData);
-
     void deleteByUserId(String userId);
 }

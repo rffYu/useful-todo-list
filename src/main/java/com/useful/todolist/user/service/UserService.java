@@ -3,9 +3,10 @@ package com.useful.todolist.user.service;
 import com.useful.todolist.user.dto.UserDTO;
 import com.useful.todolist.user.dao.UserEntity;
 import com.useful.todolist.user.repository.UserRepository;
-import com.useful.todolist.user.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -17,13 +18,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO findByUsername(String userId) {
-        UserEntity user = userRepository.findByUserId(userId)
+    public UserEntity findByUserId(String userId) {
+        return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-        return UserMapper.toDTO(user);
     }
 
-    public UserDTO updateUser(String userId, UserDTO updatedUserData) {
+    public UserEntity updateUser(String userId, UserDTO updatedUserData) {
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
@@ -32,7 +32,7 @@ public class UserService {
         user.setGroupId(updatedUserData.getGroupId());
 
         UserEntity savedUser = userRepository.save(user);
-        return UserMapper.toDTO(savedUser);
+        return savedUser;
     }
 
     public void deleteUser(String userId) {
