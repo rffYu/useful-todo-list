@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "userId": "user1",
+      "userName": "user1",
+      "password": "user1",
+      "roleId": "USER",
+      "groupId": "groupA"
+    },
+    {
+      "userId": "user2",
+      "userName": "user2",
+      "password": "user2",
+      "roleId": "ADMIN",
+      "groupId": "groupB"
+    }
+  ],
+  "todos": [
+    {
+      "todoId": "t002",
+      "userId": "user1",
+      "title": "Buy groceries",
+      "content": "Milk, eggs, bread",
+      "done": false
+    },
+    {
+      "todoId": "t003",
+      "userId": "user1",
+      "title": "Call Bob",
+      "content": "Discuss project details",
+      "done": true
+    },
+    {
+      "todoId": "t001",
+      "userId": "user2",
+      "title": "Prepare presentation",
+      "content": "For next Monday's meeting",
+      "done": false
+    }
+  ]
+}
+
