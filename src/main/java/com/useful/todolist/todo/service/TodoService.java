@@ -1,65 +1,58 @@
 package com.useful.todolist.todo.service;
 
 import com.useful.todolist.todo.dto.TodoItemDTO;
-import com.useful.todolist.todo.dao.TodoItemEntity;
-import com.useful.todolist.todo.repository.TodoRepository;
-import com.useful.todolist.todo.TodoMapper;
-import com.useful.todolist.user.repository.UserRepository;
+import com.useful.todolist.user.mapper.UserMapper;
+import com.useful.todolist.todo.mapper.TodoItemMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TodoService {
 
-    private final TodoRepository todoRepository;
-    private final UserRepository userRepository;
+    private final TodoItemMapper todoItemMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public TodoService(TodoRepository todoRepository, UserRepository userRepository) {
-        this.todoRepository = todoRepository;
-        this.userRepository = userRepository;
+    public TodoService(TodoItemMapper todoItemMapper, UserMapper userMapper) {
+        this.todoItemMapper = todoItemMapper;
+        this.userMapper = userMapper;
     }
 
     public List<TodoItemDTO> getAllTodos(String userId) {
-        List<TodoItemEntity> todos = todoRepository.findByUserId(userId);
-        return todos.stream()
-                .map(TodoMapper::toDTO)
-                .collect(Collectors.toList());
+        return todoItemMapper.findByUserId(userId);
     }
 
     public TodoItemDTO createTodo(String userId, TodoItemDTO todo) {
-        TodoItemEntity entity = TodoMapper.toEntity(todo);
 
         // Check if the user exists
-        boolean userExists = userRepository.existsByUserId(entity.getUserId());
+        boolean userExists = userMapper.existsByUserId(userId);
         if (!userExists) {
             throw new IllegalArgumentException("Invalid userId: user does not exist");
         }
 
-        TodoItemEntity saved = todoRepository.save(entity);
-        return TodoMapper.toDTO(saved);
+        todoItemMapper.save(todo);
+        return todo;
     }
 
-    public TodoItemDTO updateTodo(String userId, String todoId, TodoItemDTO todoDTO) {
-        TodoItemEntity entity = todoRepository.findByTodoIdAndUserId(todoId, userId)
-                .orElseThrow(() -> new RuntimeException("Todo not found or access denied"));
+    public TodoItemDTO updateTodo(String userId, String todoId, TodoItemDTO todoDTO) throws RuntimeException {
+        TodoItemDTO entity = todoItemMapper.findByTodoIdAndUserId(todoId, userId);
+        if (entity == null) throw new RuntimeException("Todo not found or access denied");
 
         entity.setTitle(todoDTO.getTitle());
         entity.setContent(todoDTO.getContent());
         entity.setDone(todoDTO.isDone());
 
-        TodoItemEntity updated = todoRepository.save(entity);
-        return TodoMapper.toDTO(updated);
+        todoItemMapper.save(entity);
+        return entity;
     }
 
-    public void deleteTodo(String userId, String todoId) {
-        TodoItemEntity entity = todoRepository.findByTodoIdAndUserId(todoId, userId)
-                .orElseThrow(() -> new RuntimeException("Todo not found or access denied"));
+    public void deleteTodo(String userId, String todoId) throws RuntimeException {
+        TodoItemDTO entity = todoItemMapper.findByTodoIdAndUserId(todoId, userId);
+        if (entity == null) throw new RuntimeException("Todo not found or access denied");
 
-        todoRepository.delete(entity);
+        todoItemMapper.delete(todoId);
     }
 }
 

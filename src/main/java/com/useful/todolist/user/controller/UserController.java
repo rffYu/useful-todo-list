@@ -1,7 +1,5 @@
 package com.useful.todolist.user.controller;
 
-import com.useful.todolist.user.UserMapper;
-import com.useful.todolist.user.dao.UserEntity;
 import com.useful.todolist.user.dto.UserDTO;
 import com.useful.todolist.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +24,8 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
         String userId = authentication.getName();
-        UserEntity user = userService.findByUserId(userId);
-        UserDTO userDTO = UserMapper.toDTO(user);
-        return ResponseEntity.ok(userDTO);
+        UserDTO user = userService.findByUserId(userId);
+        return ResponseEntity.ok(user);
     }
 
     /**
@@ -40,8 +37,8 @@ public class UserController {
             @RequestBody UserDTO updatedUserData) {
 
         String username = authentication.getName();
-        UserEntity updatedUser = userService.updateUser(username, updatedUserData);
-        return ResponseEntity.ok(UserMapper.toDTO(updatedUser));
+        UserDTO updatedUser = userService.updateUser(username, updatedUserData);
+        return ResponseEntity.ok(updatedUser);
     }
 
     /**

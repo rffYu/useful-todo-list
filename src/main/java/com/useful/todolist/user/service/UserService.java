@@ -1,8 +1,7 @@
 package com.useful.todolist.user.service;
 
 import com.useful.todolist.user.dto.UserDTO;
-import com.useful.todolist.user.dao.UserEntity;
-import com.useful.todolist.user.repository.UserRepository;
+import com.useful.todolist.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,34 +10,37 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 
-    public UserEntity findByUserId(String userId) {
-        return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+    public UserDTO findByUserId(String userId) throws RuntimeException {
+        UserDTO user = userMapper.findByUserId(userId);
+        if (user == null) {
+            throw new RuntimeException("User not found or access denied");
+        }
+        return user;
     }
 
-    public UserEntity updateUser(String userId, UserDTO updatedUserData) {
-        UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+    public UserDTO updateUser(String userId, UserDTO updatedUserData) throws RuntimeException {
+        UserDTO user = userMapper.findByUserId(userId);
+        if (user == null) {
+            throw new RuntimeException("User not found or access denied");
+        }
 
         user.setUserName(updatedUserData.getUserName());
         user.setRoleId(updatedUserData.getRoleId());
         user.setGroupId(updatedUserData.getGroupId());
 
-        UserEntity savedUser = userRepository.save(user);
-        return savedUser;
+        userMapper.save(user);
+        return user;
     }
 
     public void deleteUser(String userId) {
-        UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-        userRepository.delete(user);
+        userMapper.delete(userId);
     }
 }
 
