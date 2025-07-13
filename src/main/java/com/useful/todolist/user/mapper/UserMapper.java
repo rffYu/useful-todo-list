@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -17,9 +20,14 @@ public interface UserMapper {
 
     @Insert("INSERT INTO user (user_id, user_name, password, role_id, group_id) " +
         "VALUES (#{userId}, #{userName}, #{password}, #{roleId}, #{groupId})")
-    @Options(useGeneratedKeys = true, keyProperty = "user_id", keyColumn = "user_id")
+    @Options(useGeneratedKeys = true, keyProperty = "userId", keyColumn = "user_id")
     void save(UserDTO user);
+
+    void saveAll(@Param("users") List<UserDTO> users);
 
     @Delete("DELETE FROM user WHERE user_id = #{userId}")
     void delete(String userId);
+
+    @Delete("DELETE FROM user")
+    void deleteAll();
 }

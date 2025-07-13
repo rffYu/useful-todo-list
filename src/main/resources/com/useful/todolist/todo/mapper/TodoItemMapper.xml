@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.useful.todolist.todo.mapper.TodoItemMapper">
+
+    <insert id="saveAll">
+        INSERT INTO todo_item (todo_id, user_id, title, content, done)
+        VALUES
+        <foreach collection="todos" item="todo" separator=",">
+            (#{todo.todoId}, #{todo.userId}, #{todo.title}, #{todo.content}, #{todo.done})
+        </foreach>
+    </insert>
+
+</mapper>

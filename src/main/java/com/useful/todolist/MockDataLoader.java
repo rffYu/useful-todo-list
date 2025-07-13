@@ -1,14 +1,14 @@
 package com.useful.todolist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.useful.todolist.todo.dao.TodoItemEntity;
-import com.useful.todolist.todo.repository.TodoRepository;
-import com.useful.todolist.user.repository.UserRepository;
+import com.useful.todolist.todo.mapper.TodoItemMapper;
+import com.useful.todolist.todo.dto.TodoItemDTO;
+import com.useful.todolist.user.mapper.UserMapper;
+import com.useful.todolist.user.dto.UserDTO;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.useful.todolist.user.dao.UserEntity;
 import lombok.Data;
 
 import java.io.File;
@@ -16,21 +16,21 @@ import java.util.List;
 
 @Data
 class InitialData {
-    private List<UserEntity> users;
-    private List<TodoItemEntity> todos;
+    private List<UserDTO> users;
+    private List<TodoItemDTO> todos;
 }
 
 @Component
 public class MockDataLoader implements CommandLineRunner {
 
-    private final UserRepository userRepository;
-    private final TodoRepository todoRepository;
+    private final UserMapper userMapper;
+    private final TodoItemMapper todoItemMapper;
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public MockDataLoader(UserRepository userRepository, TodoRepository todoRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.todoRepository = todoRepository;
+    public MockDataLoader(UserMapper userMapper, TodoItemMapper todoMapper, PasswordEncoder passwordEncoder) {
+        this.userMapper = userMapper;
+        this.todoItemMapper = todoMapper;
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = new ObjectMapper();
     }
@@ -51,21 +51,21 @@ public class MockDataLoader implements CommandLineRunner {
         InitialData data = objectMapper.readValue(file, InitialData.class);
 
         if (data.getUsers() != null) {
-            userRepository.deleteAll();
+            userMapper.deleteAll();
 
-            List<UserEntity> encodedUsers = data.getUsers().stream()
+            List<UserDTO> encodedUsers = data.getUsers().stream()
             .peek(user -> {
                 user.setPassword(passwordEncoder.encode(user.getPassword())); // 💡 encode password here
             })
             .toList();
 
-            userRepository.saveAll(encodedUsers);
+            userMapper.saveAll(encodedUsers);
             System.out.println("Loaded " + data.getUsers().size() + " users.");
         }
 
         if (data.getTodos() != null) {
-            todoRepository.deleteAll();
-            todoRepository.saveAll(data.getTodos());
+            todoItemMapper.deleteAll();
+            todoItemMapper.saveAll(data.getTodos());
             System.out.println("Loaded " + data.getTodos().size() + " todos.");
         }
     }

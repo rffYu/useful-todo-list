@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,7 +25,12 @@ public interface TodoItemMapper {
     @Options(useGeneratedKeys = true, keyProperty = "todoId", keyColumn = "todo_id")
     void save(TodoItemDTO item);
 
+    void saveAll(@Param("todos") List<TodoItemDTO> todos);
+
     @Delete("DELETE FROM todo_item WHERE todo_id = #{todoId}")
     void delete(String todoId);
+
+    @Delete("DELETE FROM todo_item")
+    void deleteAll();
 }
 
